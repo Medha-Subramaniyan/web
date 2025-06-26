@@ -81,6 +81,12 @@ export default function Home() {
           </Link>
         </nav>
       </div>
+      {/* Bouncing Arrow to About Page */}
+      <Link href="/about" aria-label="Go to About Me">
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 cursor-pointer animate-bounce z-20">
+          <FaChevronDown className="w-10 h-10 text-white opacity-80" />
+        </div>
+      </Link>
     </div>
   );
 }
