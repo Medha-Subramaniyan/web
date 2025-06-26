@@ -64,7 +64,8 @@ export default function Home() {
 
         {/* Nav links spread out across a 600px container */}
         <nav className="flex justify-around w-full max-w-[600px] mt-[100px] mb-40">
-          <Link href="#about" className="text-white text-lg font-medium hover:underline">
+          {/* Navigate to the dedicated About page instead of a page anchor */}
+          <Link href="/about" className="text-white text-lg font-medium hover:underline">
             About Me
           </Link>
           <Link href="#resume" className="text-white text-lg font-medium hover:underline">
