@@ -6,8 +6,8 @@ type Node = { x: number; y: number; vx: number; vy: number; };
 
 export default function FlowFieldBackground() {
   const nodesRef = useRef<Node[]>([]);
-  const numNodes = 48; // more nodes for higher frequency
-  const nodeRadius = 90; // mouse influence
+  const numNodes = 65; // more nodes for higher frequency
+  const nodeRadius = 100; // mouse influence
 
   // Initialize nodes
   const setup = (p5: any, canvasParentRef: any) => {
@@ -17,8 +17,8 @@ export default function FlowFieldBackground() {
       nodesRef.current.push({
         x: p5.random(p5.width),
         y: p5.random(p5.height),
-        vx: p5.random(-0.18, 0.18),
-        vy: p5.random(-0.18, 0.18),
+        vx: p5.random(-0.65, 0.65), // increased velocity
+        vy: p5.random(-0.65, 0.65), // increased velocity
       });
     }
     p5.background(15, 18, 28, 255);
@@ -56,9 +56,9 @@ export default function FlowFieldBackground() {
 
     // Animate nodes
     for (const node of nodesRef.current) {
-      // Subtle random drift
-      node.x += node.vx + p5.noise(node.x * 0.002, node.y * 0.002, p5.frameCount * 0.01) * 0.3 - 0.15;
-      node.y += node.vy + p5.noise(node.y * 0.002, node.x * 0.002, p5.frameCount * 0.01) * 0.3 - 0.15;
+      // Subtle random drift (increased magnitude)
+      node.x += node.vx + p5.noise(node.x * 0.002, node.y * 0.002, p5.frameCount * 0.01) * 0.6 - 0.3;
+      node.y += node.vy + p5.noise(node.y * 0.002, node.x * 0.002, p5.frameCount * 0.01) * 0.6 - 0.3;
 
       // Mouse repulsion (gentler)
       const dx = node.x - p5.mouseX;
@@ -93,8 +93,8 @@ export default function FlowFieldBackground() {
     const triangles = getTriangles(nodesRef.current);
     for (const [a, b, c] of triangles) {
       p5.noFill();
-      p5.stroke(120, 180, 255, 28); // even lower alpha for more lines
-      p5.strokeWeight(1);
+      p5.stroke(120, 180, 255, 12 + Math.random() * 8); // alpha between 12-20
+      p5.strokeWeight(0.7);
       p5.triangle(a.x, a.y, b.x, b.y, c.x, c.y);
     }
 

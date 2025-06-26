@@ -25,8 +25,8 @@ export default function Home() {
           <div className="flex flex-col items-center space-y-4">
             <a
               href="https://github.com/Medha-Subramaniyan"
-              target="_blank"
-              rel="noopener noreferrer"
+            target="_blank"
+            rel="noopener noreferrer"
               aria-label="GitHub"
               className="rounded-full border-2 border-white p-3 hover:bg-white hover:text-indigo-600 transition-all"
             >
@@ -38,21 +38,21 @@ export default function Home() {
           <div className="flex flex-col items-center space-y-4">
             <a
               href="https://www.linkedin.com/in/medhasubramaniyan/"
-              target="_blank"
-              rel="noopener noreferrer"
+            target="_blank"
+            rel="noopener noreferrer"
               aria-label="LinkedIn"
               className="rounded-full border-2 border-white p-3 hover:bg-white hover:text-blue-700 transition-all"
-            >
+          >
               <FaLinkedin className="w-8 h-8" />
-            </a>
+          </a>
             <span className="text-white text-sm">LinkedIn</span>
-          </div>
+        </div>
 
           <div className="flex flex-col items-center space-y-4">
-            <a
+        <a
               href="https://substack.com/@medhasubrastack?utm_source=user-menu"
-              target="_blank"
-              rel="noopener noreferrer"
+          target="_blank"
+          rel="noopener noreferrer"
               aria-label="Substack"
               className="rounded-full border-2 border-white p-3 hover:bg-white hover:text-orange-600 transition-all"
             >
