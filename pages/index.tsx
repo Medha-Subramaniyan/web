@@ -1,6 +1,7 @@
 import { FaGithub, FaLinkedin, FaRegNewspaper, FaChevronDown } from 'react-icons/fa6';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
+import FlowFieldBackground from '../components/FlowFieldBackground';
 
 // Optionally, use a dynamic import for a lightweight animated background
 // For now, let's use a simple animated SVG background as a placeholder
@@ -8,28 +9,7 @@ import dynamic from 'next/dynamic';
 export default function Home() {
   return (
     <div className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-gradient-to-br from-indigo-600 to-blue-500">
-      {/* Animated SVG geometric background */}
-      <svg
-        className="absolute inset-0 w-full h-full opacity-30 z-0"
-        viewBox="0 0 800 600"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <circle cx="200" cy="200" r="80" stroke="white" strokeWidth="2" fill="none">
-          <animate attributeName="r" values="80;100;80" dur="6s" repeatCount="indefinite" />
-        </circle>
-        <rect x="500" y="100" width="120" height="120" rx="30" stroke="white" strokeWidth="2" fill="none">
-          <animate attributeName="x" values="500;520;500" dur="7s" repeatCount="indefinite" />
-        </rect>
-        <polygon points="600,400 700,500 500,500" stroke="white" strokeWidth="2" fill="none">
-          <animate
-            attributeName="points"
-            values="600,400 700,500 500,500;620,420 720,520 520,520;600,400 700,500 500,500"
-            dur="8s"
-            repeatCount="indefinite"
-          />
-        </polygon>
-      </svg>
+      <FlowFieldBackground />
 
       {/* Main content */}
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen">
