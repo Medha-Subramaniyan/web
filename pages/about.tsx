@@ -16,7 +16,7 @@ export default function About() {
           </p>
 
           {/* Data Analytics & Technical Expertise */}
-          <Link href="/data" className="group inline-block mb-2">
+          <Link href="/data-analytics" className="group inline-block mb-2">
             <h2 className="text-2xl md:text-3xl font-bold text-blue-700 group-hover:underline transition-all">Data Analytics & Technical Expertise</h2>
           </Link>
           <ul className="list-disc pl-6 text-gray-700 mb-8">

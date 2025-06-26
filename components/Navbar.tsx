@@ -19,7 +19,7 @@ export default function Navbar({ hideHomeLink = false }: NavbarProps) {
     !hideHomeLink ? { href: '/', label: 'Home' } : null,
     { href: '/resume.pdf', label: 'Resume', external: true },
     { href: '/about', label: 'About Me' },
-    { href: '/data', label: 'Data Analytics' },
+    { href: '/data-analytics', label: 'Data Analytics' },
     { href: '/art', label: 'Art' },
     { href: '/hobbies', label: 'Hobbies' }
   ].filter((link): link is NavLink => Boolean(link));
