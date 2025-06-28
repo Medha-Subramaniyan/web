@@ -96,6 +96,8 @@ export default function MusicRoom() {
   const albumTextures = useLoader(THREE.TextureLoader, [
     '/albums/GKMC.jpg',
     '/albums/discovery.png',
+    '/albums/divine.jpg',
+    '/albums/orange.jpg',
   ]);
 
   const goLeft = () => {
@@ -276,9 +278,9 @@ export default function MusicRoom() {
           const leanAngle = 0;
           return Array.from({ length: 5 }).map((_, i) => {
             const x = -0.8 + i * 0.4;
-            // Use images for the first two placeholders on the bottom shelf
+            // Use images for the first four placeholders on the bottom shelf
             let matProps = {};
-            if (row === 0 && i < 2) {
+            if (row === 0 && i < 4) {
               matProps = { map: albumTextures[i], color: 'white' };
             } else {
               matProps = { color: row === 0 ? '#e0e0e0' : '#c0c0c0' };
