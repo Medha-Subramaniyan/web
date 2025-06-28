@@ -1,5 +1,5 @@
 import { Canvas, useFrame, useLoader } from '@react-three/fiber'
-import { useRef, useState, Suspense } from 'react'
+import { useRef, useState, Suspense, useMemo } from 'react'
 import { a, useSpring } from '@react-spring/three'
 import * as THREE from 'three'
 import { useGLTF } from '@react-three/drei'
@@ -35,19 +35,30 @@ function VintageStereo({ position }: { position: [number, number, number] }) {
 }
 
 function MonsteraPlant({ position }: { position: [number, number, number] }) {
-  const { scene } = useGLTF('/models/monstera_deliciosa_potted_mid-century_plant/scene.gltf')
-  // Debug: log the scene to see if it loads
-  console.log('Monstera plant scene:', scene)
-  // Make sure all meshes are visible
-  scene.traverse((child: any) => {
-    if (child.isMesh) {
-      child.visible = true;
-      if (!child.material) {
-        child.material = new THREE.MeshStandardMaterial({ color: 'green' })
+  const { scene: original } = useGLTF(
+    '/models/monstera_deliciosa_potted_mid-century_plant/scene.gltf'
+  )
+
+  // Deep‐clone so each instance has its own meshes/materials
+  const scene = useMemo(() => {
+    const clone = original.clone(true)
+    clone.traverse((child: any) => {
+      if (child.isMesh) {
+        child.castShadow = true
+        child.receiveShadow = true
+        child.material = child.material.clone()
       }
-    }
-  })
-  return <primitive object={scene} position={position} scale={[0.7, 0.7, 0.7]} />
+    })
+    return clone as THREE.Object3D
+  }, [original])
+
+  return (
+    <primitive
+      object={scene}
+      position={position}
+      scale={[0.7, 0.7, 0.7]}
+    />
+  )
 }
 
 export default function MusicRoom() {
@@ -197,10 +208,10 @@ export default function MusicRoom() {
         <Suspense fallback={null}>
           <VintageStereo position={[0.055, 0.1, -1.9]} />
         </Suspense>
-        {/* Monstera Plants flanking the stereo */}
+        {/* Two cloned Monstera plants */}
         <Suspense fallback={null}>
-          <MonsteraPlant position={[-1.5, 0.5, -1.7]} />
-          <MonsteraPlant position={[1.5, 0.5, -1.7]} />
+          <MonsteraPlant position={[-1.2, 0.5, -1.7]} />
+          <MonsteraPlant position={[1.2, 0.5, -1.7]} />
         </Suspense>
         {/* Wall-mounted album shelves (Wood004 texture) */}
         <mesh position={[0, 1.2, -1.85]}>
