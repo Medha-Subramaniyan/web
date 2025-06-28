@@ -65,20 +65,38 @@ export default function MusicRoom() {
   const [angle, setAngle] = useState(0)
 
   // Load carpet texture
-  const carpetTexture = useLoader(THREE.TextureLoader, '/Carpet016_4K-PNG/Carpet016_4K-PNG_Color.png')
+  const carpetTexture = useLoader(
+    THREE.TextureLoader,
+    '/Carpet016_4K-PNG/Carpet016_4K-PNG_Color.png'
+  )
   carpetTexture.wrapS = carpetTexture.wrapT = THREE.RepeatWrapping
   carpetTexture.repeat.set(2, 2)
 
   // Load wood texture and maps for bookshelf and shelves
-  const woodColor = useLoader(THREE.TextureLoader, '/Wood004_4K-PNG/Wood004_4K-PNG_Color.png')
-  const woodNormal = useLoader(THREE.TextureLoader, '/Wood004_4K-PNG/Wood004_4K-PNG_NormalGL.png')
-  const woodRoughness = useLoader(THREE.TextureLoader, '/Wood004_4K-PNG/Wood004_4K-PNG_Roughness.png')
+  const woodColor = useLoader(
+    THREE.TextureLoader,
+    '/Wood004_4K-PNG/Wood004_4K-PNG_Color.png'
+  )
+  const woodNormal = useLoader(
+    THREE.TextureLoader,
+    '/Wood004_4K-PNG/Wood004_4K-PNG_NormalGL.png'
+  )
+  const woodRoughness = useLoader(
+    THREE.TextureLoader,
+    '/Wood004_4K-PNG/Wood004_4K-PNG_Roughness.png'
+  )
   woodColor.wrapS = woodColor.wrapT = THREE.RepeatWrapping
   woodNormal.wrapS = woodNormal.wrapT = THREE.RepeatWrapping
   woodRoughness.wrapS = woodRoughness.wrapT = THREE.RepeatWrapping
   woodColor.repeat.set(1, 1)
   woodNormal.repeat.set(1, 1)
   woodRoughness.repeat.set(1, 1)
+
+  // Load album cover textures
+  const albumTextures = useLoader(THREE.TextureLoader, [
+    '/albums/GKMC.jpg',
+    '/albums/discovery.png',
+  ]);
 
   const goLeft = () => {
     setAngle(prev => prev - Math.PI / 2)
@@ -258,6 +276,13 @@ export default function MusicRoom() {
           const leanAngle = 0;
           return Array.from({ length: 5 }).map((_, i) => {
             const x = -0.8 + i * 0.4;
+            // Use images for the first two placeholders on the bottom shelf
+            let matProps = {};
+            if (row === 0 && i < 2) {
+              matProps = { map: albumTextures[i], color: 'white' };
+            } else {
+              matProps = { color: row === 0 ? '#e0e0e0' : '#c0c0c0' };
+            }
             return (
               <mesh
                 key={`album-back-${row}-${i}`}
@@ -266,7 +291,7 @@ export default function MusicRoom() {
                 castShadow
               >
                 <boxGeometry args={[0.32, 0.32, 0.03]} />
-                <meshStandardMaterial color={row === 0 ? '#e0e0e0' : '#c0c0c0'} />
+                <meshStandardMaterial {...matProps} />
               </mesh>
             );
           });
