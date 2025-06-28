@@ -25,7 +25,7 @@ export default function About() {
 
           {/* Art */}
           <Link href="/art" className="group inline-block mb-2">
-            <h2 className="text-2xl md:text-3xl font-bold text-pink-700 group-hover:underline transition-all">Art</h2>
+            <h2 className="text-2xl md:text-3xl font-bold text-pink-700 group-hover:underline transition-all">Art Gallery</h2>
           </Link>
           <p className="text-lg text-gray-700 mb-10">
             Outside of work, I dive into creative coding and generative art driven by my fascination with math and engineering. I love to craft synergetic, emotionally resonant experiences through technology—melding aesthetics from art, design, architecture, math, science, and physics. To me each project is an invitation to explore how sound, form, motion, and data converge. These experiments not only spark moments of wonder for viewers but also deepen my understanding of complex systems and sharpen my skills in algorithmic design, UI/UX interaction, and computational problem-solving.

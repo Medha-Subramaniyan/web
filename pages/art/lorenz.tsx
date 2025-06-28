@@ -21,11 +21,7 @@ export default function LorenzViewer() {
         </div>
         
         <div className="mt-8 text-center">
-          <Link href="/art">
-            <button className="px-6 py-3 bg-white/10 backdrop-blur-md rounded-full border border-white/20 text-white hover:bg-white/20 transition-all">
-              ← Back to Gallery
-            </button>
-          </Link>
+          <Link href="/art">Art Gallery</Link>
         </div>
       </div>
     </div>

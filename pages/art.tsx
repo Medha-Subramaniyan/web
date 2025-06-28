@@ -3,7 +3,7 @@ import dynamic from 'next/dynamic';
 
 const ThreeJSArtGallery = dynamic(() => import('../components/ThreeJSArtGallery'), { ssr: false });
 
-export default function Art() {
+export default function ArtGallery() {
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <Navbar />
