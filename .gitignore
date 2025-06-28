@@ -39,3 +39,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Ignore 3D models and textures
+public/Carpet016_4K-PNG/
+public/Wood004_4K-PNG/
+public/models/

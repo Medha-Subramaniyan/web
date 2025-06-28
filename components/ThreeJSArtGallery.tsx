@@ -1,163 +1,243 @@
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { Environment, OrbitControls } from '@react-three/drei';
-import { Suspense, useState, useMemo } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
+import { Canvas, useThree, useLoader } from '@react-three/fiber';
+import { Environment } from '@react-three/drei';
+import { useRouter } from 'next/router';
 import * as THREE from 'three';
+import dynamic from 'next/dynamic';
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
-// Colors
-const WALL_COLOR  = '#e7e3dc';
-const FLOOR_COLOR = '#bdb6a3';
-const FRAME_COLOR = '#6e5c4b';
+// Constants
+const FRAME_COLOR = '#8B4513';
+const defaultZ = 8;
 
-// How close the camera must be (world units) to trigger description mode
-const DESCRIPTION_DISTANCE = 4;
+// Frame positions for 5 evenly spaced frames on the front wall
+const frameCount = 5;
+const frameSpacing = 7.5; // space between frames
+const frameY = 2; // eye level
+const frameZ = 11.8; // front wall
+const frameXPositions = Array.from({ length: frameCount }, (_, i) => (i - Math.floor(frameCount / 2)) * frameSpacing);
 
-// Your exhibits, with position & text
-const exhibits = [
-  {
-    position: [-4, 1.6, -6] as [number, number, number],
-    name:        'Fractal Mandala',
-    description: 'A swirling fractal pattern derived from recursive geometry.'
-  },
-  {
-    position: [-2, 1.6, -6],
-    name:        'Perlin Flow Field',
-    description: 'Particles flowing in a noise-driven field, reacting to sound.'
-  },
-  {
-    position: [ 0, 1.6, -6],
-    name:        'Parametric Surface',
-    description: 'A 3D surface sculpted from differential equations.'
-  },
-  {
-    position: [ 2, 1.6, -6],
-    name:        'Data Sculpture',
-    description: 'A visual mapping of NBA win percentages as a 3D bar chart.'
-  },
-  {
-    position: [ 4, 1.6, -6],
-    name:        'Circuit Visualization',
-    description: 'An animated representation of electrical circuit dynamics.'
-  },
-];
-
-// Single frame + canvas geometry
+// Simple Frame component
 function Frame({ position }: { position: [number, number, number] }) {
   return (
-    <>
-      <mesh position={position}>
+    <group>
+      <mesh position={[position[0], position[1], frameZ]}>
         <boxGeometry args={[2.2, 2.8, 0.15]} />
         <meshStandardMaterial color={FRAME_COLOR} metalness={0.3} roughness={0.5} />
       </mesh>
-      <mesh position={[position[0], position[1], position[2] + 0.09]}>
+      <mesh position={[position[0], position[1], frameZ + 0.09]}>
         <boxGeometry args={[1.8, 2.4, 0.05]} />
-        <meshStandardMaterial color={WALL_COLOR} metalness={0.1} roughness={0.8} />
+        <meshStandardMaterial color="#f0f0f0" />
       </mesh>
-    </>
+    </group>
   );
 }
 
-// The 3D scene: floor, wall, frames, lighting, and proximity check
-function GalleryScene({ onEnterDescription }: { onEnterDescription: (i: number) => void }) {
-  const { camera } = useThree();
-
-  // Every frame, check camera distance to each exhibit
-  useFrame(() => {
-    for (let i = 0; i < exhibits.length; i++) {
-      const target = new THREE.Vector3(...exhibits[i].position);
-      if (camera.position.distanceTo(target) < DESCRIPTION_DISTANCE) {
-        onEnterDescription(i);
-        break;
-      }
-    }
-  });
+// Gallery Room component with walls and wood floor
+function GalleryRoom({ children }: { children: React.ReactNode }) {
+  const woodTexture = useLoader(THREE.TextureLoader, '/Wood004_4K-PNG/Wood004_4K-PNG_Color.png');
+  const woodNormalMap = useLoader(THREE.TextureLoader, '/Wood004_4K-PNG/Wood004_4K-PNG_NormalGL.png');
+  const woodRoughnessMap = useLoader(THREE.TextureLoader, '/Wood004_4K-PNG/Wood004_4K-PNG_Roughness.png');
+  
+  // Set texture repeat for wood floor
+  woodTexture.wrapS = woodTexture.wrapT = THREE.RepeatWrapping;
+  woodTexture.repeat.set(4, 4);
+  woodNormalMap.wrapS = woodNormalMap.wrapT = THREE.RepeatWrapping;
+  woodNormalMap.repeat.set(4, 4);
+  woodRoughnessMap.wrapS = woodRoughnessMap.wrapT = THREE.RepeatWrapping;
+  woodRoughnessMap.repeat.set(4, 4);
 
   return (
-    <>
-      {/* Background & Floor/Wall */}
-      <color attach="background" args={[WALL_COLOR]} />
-      <mesh receiveShadow position={[0, -0.01, -6]} rotation={[-Math.PI / 2, 0, 0]}>
-        <planeGeometry args={[16, 8]} />
-        <meshStandardMaterial color={FLOOR_COLOR} roughness={0.7} />
+    <group>
+      {/* Wood Floor */}
+      <mesh position={[0, -2, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+        <planeGeometry args={[20, 20]} />
+        <meshStandardMaterial 
+          map={woodTexture}
+          normalMap={woodNormalMap}
+          roughnessMap={woodRoughnessMap}
+          normalScale={[0.5, 0.5]}
+        />
       </mesh>
-      <mesh receiveShadow position={[0, 2, -6.6]}>
-        <planeGeometry args={[16, 6]} />
-        <meshStandardMaterial color={WALL_COLOR} />
+      
+      {/* Front Wall - Main wall with frames */}
+      <mesh position={[0, 2, 12]} rotation={[0, Math.PI, 0]} receiveShadow>
+        <planeGeometry args={[30, 14]} />
+        <meshStandardMaterial color="#ffffff" side={THREE.DoubleSide} />
       </mesh>
+      
+      {/* Back Wall */}
+      <mesh position={[0, 2, -12]} receiveShadow>
+        <planeGeometry args={[30, 14]} />
+        <meshStandardMaterial color="#eaeaea" side={THREE.DoubleSide} />
+      </mesh>
+      
+      {/* Left Wall */}
+      <mesh position={[-15, 2, 0]} rotation={[0, Math.PI / 2, 0]} receiveShadow>
+        <planeGeometry args={[24, 14]} />
+        <meshStandardMaterial color="#f3f3f3" side={THREE.DoubleSide} />
+      </mesh>
+      
+      {/* Right Wall */}
+      <mesh position={[15, 2, 0]} rotation={[0, -Math.PI / 2, 0]} receiveShadow>
+        <planeGeometry args={[24, 14]} />
+        <meshStandardMaterial color="#f3f3f3" side={THREE.DoubleSide} />
+      </mesh>
+      
+      {/* Corner trim: vertical black boxes at wall intersections */}
+      {/* Left-Front corner */}
+      <mesh position={[-15, 2, 12]}>
+        <boxGeometry args={[0.12, 14, 0.12]} />
+        <meshStandardMaterial color="#222" />
+      </mesh>
+      {/* Right-Front corner */}
+      <mesh position={[15, 2, 12]}>
+        <boxGeometry args={[0.12, 14, 0.12]} />
+        <meshStandardMaterial color="#222" />
+      </mesh>
+      {/* Left-Back corner */}
+      <mesh position={[-15, 2, -12]}>
+        <boxGeometry args={[0.12, 14, 0.12]} />
+        <meshStandardMaterial color="#222" />
+      </mesh>
+      {/* Right-Back corner */}
+      <mesh position={[15, 2, -12]}>
+        <boxGeometry args={[0.12, 14, 0.12]} />
+        <meshStandardMaterial color="#222" />
+      </mesh>
+      
+      {/* Ceiling - Light gray */}
+      <mesh position={[0, 6, 0]} rotation={[Math.PI / 2, 0, 0]} receiveShadow>
+        <planeGeometry args={[20, 20]} />
+        <meshStandardMaterial color="#f5f5f5" />
+      </mesh>
+      
+      {children}
+    </group>
+  );
+}
 
-      {/* All frames */}
-      {exhibits.map((ex, i) => (
-        <Frame key={i} position={ex.position} />
+// Animated Camera component
+function AnimatedCamera() {
+  const { camera } = useThree();
+  const [current, setCurrent] = useState(2); // Start at center frame
+
+  useEffect(() => {
+    camera.position.x = frameXPositions[current];
+  }, [current, camera]);
+
+  // Navigation handlers
+  const goLeft = () => {
+    if (current > 0) setCurrent(current - 1);
+  };
+
+  const goRight = () => {
+    if (current < frameXPositions.length - 1) setCurrent(current + 1);
+  };
+
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'ArrowLeft') goLeft();
+      if (event.key === 'ArrowRight') goRight();
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [current]);
+
+  return null;
+}
+
+// Main Gallery Scene
+function GalleryScene() {
+  // Downlight fixture positions (above each frame)
+  const fixtureY = 4.7;
+  const fixtureZ = 11.7;
+
+  return (
+    <GalleryRoom>
+      {/* Downlighting fixtures and spotlights for each frame */}
+      {frameXPositions.map((x, i) => (
+        <group key={i}>
+          {/* Visible fixture (small cylinder) */}
+          <mesh position={[x, fixtureY, fixtureZ]}>
+            <cylinderGeometry args={[0.10, 0.10, 0.18, 16]} />
+            <meshStandardMaterial color="#cccccc" metalness={0.5} roughness={0.3} />
+          </mesh>
+          {/* Downlight (spotlight) */}
+          <spotLight
+            position={[x, fixtureY - 0.1, fixtureZ]}
+            angle={0.32}
+            penumbra={0.6}
+            intensity={2.2}
+            distance={10}
+            castShadow
+            color="#fffbe6"
+            target-position={[x, frameY, frameZ]}
+          />
+        </group>
       ))}
-
-      {/* Lights + Environment */}
+      {/* All frames mounted on the front wall */}
+      {frameXPositions.map((x, i) => (
+        <Frame key={i} position={[x, frameY, 0]} />
+      ))}
+      {/* Room lighting */}
       <ambientLight intensity={0.5} />
-      <directionalLight position={[0, 8, 4]} intensity={1.2} castShadow />
+      <directionalLight position={[0, 8, -4]} intensity={0.4} castShadow />
+      <directionalLight position={[0, 8, 4]} intensity={0.3} castShadow />
       <Suspense fallback={null}>
         <Environment preset="city" background={false} />
       </Suspense>
+    </GalleryRoom>
+  );
+}
+
+// Navigation Controls with large left/right arrows
+function NavigationControls({ current, setCurrent }: { current: number, setCurrent: (i: number) => void }) {
+  const goLeft = () => {
+    if (current > 0) setCurrent(current - 1);
+  };
+  const goRight = () => {
+    if (current < frameXPositions.length - 1) setCurrent(current + 1);
+  };
+  return (
+    <>
+      <button
+        onClick={goLeft}
+        disabled={current === 0}
+        style={{ position: 'absolute', left: 24, top: '50%', transform: 'translateY(-50%)', zIndex: 20, background: 'none', border: 'none', cursor: 'pointer', fontSize: 48, color: current === 0 ? '#ccc' : '#333' }}
+        aria-label="Previous Frame"
+      >
+        <FaChevronLeft />
+      </button>
+      <button
+        onClick={goRight}
+        disabled={current === frameXPositions.length - 1}
+        style={{ position: 'absolute', right: 24, top: '50%', transform: 'translateY(-50%)', zIndex: 20, background: 'none', border: 'none', cursor: 'pointer', fontSize: 48, color: current === frameXPositions.length - 1 ? '#ccc' : '#333' }}
+        aria-label="Next Frame"
+      >
+        <FaChevronRight />
+      </button>
     </>
   );
 }
 
-// Styles for the overlay nav buttons
-const overlayButtonStyle: React.CSSProperties = {
-  background:    'rgba(255,255,255,0.8)',
-  border:        'none',
-  borderRadius:  '50%',
-  width:         48,
-  height:        48,
-  fontSize:      24,
-  cursor:        'pointer',
-  margin:        '0 1rem'
-};
-
+// Main Gallery Component
 export default function ThreeJSArtGallery() {
-  const [descIndex, setDescIndex] = useState<number | null>(null);
-
-  const handleEnter = (i: number) => {
-    if (descIndex === null) setDescIndex(i);
-  };
-  const handleClose = () => setDescIndex(null);
-  const handlePrev  = () => setDescIndex((i) => (i! > 0 ? i! - 1 : i!));
-  const handleNext  = () => setDescIndex((i) => (i! < exhibits.length - 1 ? i! + 1 : i!));
+  const [current, setCurrent] = useState(2);
 
   return (
     <div style={{ width: '100vw', height: '100vh', position: 'relative' }}>
-      {/* Description Overlay */}
-      {descIndex !== null && (
-        <div style={{
-          position: 'absolute', top: 0, left: 0,
-          width: '100%', height: '100%',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          background: 'rgba(0,0,0,0.6)', color: '#fff', zIndex: 10
-        }}>
-          <button onClick={handlePrev} disabled={descIndex === 0} style={overlayButtonStyle}>
-            ←
-          </button>
-          <div style={{ maxWidth: '60%', textAlign: 'center' }}>
-            <h2>{exhibits[descIndex].name}</h2>
-            <p>{exhibits[descIndex].description}</p>
-            <button onClick={handleClose} style={{ marginTop: '1rem', padding: '0.5rem 1rem' }}>
-              Close
-            </button>
-          </div>
-          <button onClick={handleNext} disabled={descIndex === exhibits.length - 1} style={overlayButtonStyle}>
-            →
-          </button>
-        </div>
-      )}
-
       {/* 3D Canvas */}
-      <Canvas camera={{ position: [0, 1.6, 10], fov: 60 }}>
-        <OrbitControls
-          enablePan={false}
-          minPolarAngle={Math.PI / 2 - 0.2}
-          maxPolarAngle={Math.PI / 2 + 0.2}
-          minDistance={3}
-          maxDistance={20}
-        />
-        <GalleryScene onEnterDescription={handleEnter} />
+      <Canvas shadows camera={{ position: [frameXPositions[current], 1.5, 6], fov: 50 }}>
+        <color attach="background" args={["#fff"]} />
+        <AnimatedCamera />
+        <GalleryScene />
       </Canvas>
+      
+      {/* Navigation Controls */}
+      <NavigationControls current={current} setCurrent={setCurrent} />
     </div>
   );
 }
