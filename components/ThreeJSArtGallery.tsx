@@ -230,7 +230,7 @@ export default function ThreeJSArtGallery() {
   return (
     <div style={{ width: '100vw', height: '100vh', position: 'relative' }}>
       {/* 3D Canvas */}
-      <Canvas shadows camera={{ position: [frameXPositions[current], 1.5, 6], fov: 50 }}>
+      <Canvas shadows camera={{ position: [frameXPositions[current], 2.2, 11], fov: 65 }}>
         <color attach="background" args={["#fff"]} />
         <AnimatedCamera />
         <GalleryScene />
