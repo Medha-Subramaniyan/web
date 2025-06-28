@@ -249,6 +249,94 @@ export default function MusicRoom() {
           <boxGeometry args={[2.0, 0.08, 0.18]} />
           <meshStandardMaterial map={woodColor} normalMap={woodNormal} roughnessMap={woodRoughness} />
         </mesh>
+        {/* Album placeholders for back wall shelves */}
+        {[0, 1].map((row) => {
+          const shelfY = row === 0 ? 1.15 : 1.65;
+          const albumHeight = 0.32;
+          const albumY = shelfY + albumHeight / 2 + 0.04;
+          const z = -1.82;
+          const leanAngle = 0;
+          return Array.from({ length: 5 }).map((_, i) => {
+            const x = -0.8 + i * 0.4;
+            return (
+              <mesh
+                key={`album-back-${row}-${i}`}
+                position={[x, albumY, z]}
+                rotation={[leanAngle, 0, 0]}
+                castShadow
+              >
+                <boxGeometry args={[0.32, 0.32, 0.03]} />
+                <meshStandardMaterial color={row === 0 ? '#e0e0e0' : '#c0c0c0'} />
+              </mesh>
+            );
+          });
+        })}
+        {/* Album placeholders for front wall shelves */}
+        {[0, 1].map((row) => {
+          const shelfY = row === 0 ? 1.0 : 1.5;
+          const albumHeight = 0.32;
+          const albumY = shelfY + albumHeight / 2 + 0.04;
+          const z = 1.82;
+          const leanAngle = 0;
+          return Array.from({ length: 5 }).map((_, i) => {
+            const x = -0.8 + i * 0.4;
+            return (
+              <mesh
+                key={`album-front-${row}-${i}`}
+                position={[x, albumY, z]}
+                rotation={[leanAngle, Math.PI, 0]}
+                castShadow
+              >
+                <boxGeometry args={[0.32, 0.32, 0.03]} />
+                <meshStandardMaterial color={row === 0 ? '#e0e0e0' : '#c0c0c0'} />
+              </mesh>
+            );
+          });
+        })}
+        {/* Album placeholders for left wall shelves */}
+        {[0, 1].map((row) => {
+          const shelfY = row === 0 ? 1.0 : 1.5;
+          const albumHeight = 0.32;
+          const albumY = shelfY + albumHeight / 2 + 0.04;
+          const x = -1.82;
+          const leanAngle = 0;
+          return Array.from({ length: 5 }).map((_, i) => {
+            const z = -0.8 + i * 0.4;
+            return (
+              <mesh
+                key={`album-left-${row}-${i}`}
+                position={[x, albumY, z]}
+                rotation={[leanAngle, Math.PI / 2, 0]}
+                castShadow
+              >
+                <boxGeometry args={[0.32, 0.32, 0.03]} />
+                <meshStandardMaterial color={row === 0 ? '#e0e0e0' : '#c0c0c0'} />
+              </mesh>
+            );
+          });
+        })}
+        {/* Album placeholders for right wall shelves */}
+        {[0, 1].map((row) => {
+          const shelfY = row === 0 ? 1.0 : 1.5;
+          const albumHeight = 0.32;
+          const albumY = shelfY + albumHeight / 2 + 0.04;
+          const x = 1.82;
+          const leanAngle = 0;
+          return Array.from({ length: 5 }).map((_, i) => {
+            const z = -0.8 + i * 0.4;
+            return (
+              <mesh
+                key={`album-right-${row}-${i}`}
+                position={[x, albumY, z]}
+                rotation={[leanAngle, -Math.PI / 2, 0]}
+                castShadow
+              >
+                <boxGeometry args={[0.32, 0.32, 0.03]} />
+                <meshStandardMaterial color={row === 0 ? '#e0e0e0' : '#c0c0c0'} />
+              </mesh>
+            );
+          });
+        })}
         {/* Lighting */}
         <ambientLight intensity={0.7} />
         <pointLight position={[0, 2, 2]} intensity={0.7} />
