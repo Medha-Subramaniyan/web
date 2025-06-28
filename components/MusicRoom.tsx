@@ -214,12 +214,39 @@ export default function MusicRoom() {
           <MonsteraPlant position={[1.2, 0.5, -1.7]} />
         </Suspense>
         {/* Wall-mounted album shelves (Wood004 texture) */}
-        <mesh position={[0, 1.2, -1.85]}>
-          <boxGeometry args={[1.6, 0.08, 0.18]} />
+        <mesh position={[0, 1.15, -1.85]}>
+          <boxGeometry args={[2.0, 0.08, 0.18]} />
           <meshStandardMaterial map={woodColor} normalMap={woodNormal} roughnessMap={woodRoughness} />
         </mesh>
-        <mesh position={[0, 1.6, -1.85]}>
-          <boxGeometry args={[1.6, 0.08, 0.18]} />
+        <mesh position={[0, 1.65, -1.85]}>
+          <boxGeometry args={[2.0, 0.08, 0.18]} />
+          <meshStandardMaterial map={woodColor} normalMap={woodNormal} roughnessMap={woodRoughness} />
+        </mesh>
+        {/* Front wall shelves */}
+        <mesh position={[0, 1.0, 1.85]} rotation={[0, Math.PI, 0]}>
+          <boxGeometry args={[2.0, 0.08, 0.18]} />
+          <meshStandardMaterial map={woodColor} normalMap={woodNormal} roughnessMap={woodRoughness} />
+        </mesh>
+        <mesh position={[0, 1.5, 1.85]} rotation={[0, Math.PI, 0]}>
+          <boxGeometry args={[2.0, 0.08, 0.18]} />
+          <meshStandardMaterial map={woodColor} normalMap={woodNormal} roughnessMap={woodRoughness} />
+        </mesh>
+        {/* Left wall shelves */}
+        <mesh position={[-1.85, 1.0, 0]} rotation={[0, Math.PI / 2, 0]}>
+          <boxGeometry args={[2.0, 0.08, 0.18]} />
+          <meshStandardMaterial map={woodColor} normalMap={woodNormal} roughnessMap={woodRoughness} />
+        </mesh>
+        <mesh position={[-1.85, 1.5, 0]} rotation={[0, Math.PI / 2, 0]}>
+          <boxGeometry args={[2.0, 0.08, 0.18]} />
+          <meshStandardMaterial map={woodColor} normalMap={woodNormal} roughnessMap={woodRoughness} />
+        </mesh>
+        {/* Right wall shelves */}
+        <mesh position={[1.85, 1.0, 0]} rotation={[0, -Math.PI / 2, 0]}>
+          <boxGeometry args={[2.0, 0.08, 0.18]} />
+          <meshStandardMaterial map={woodColor} normalMap={woodNormal} roughnessMap={woodRoughness} />
+        </mesh>
+        <mesh position={[1.85, 1.5, 0]} rotation={[0, -Math.PI / 2, 0]}>
+          <boxGeometry args={[2.0, 0.08, 0.18]} />
           <meshStandardMaterial map={woodColor} normalMap={woodNormal} roughnessMap={woodRoughness} />
         </mesh>
         {/* Lighting */}
