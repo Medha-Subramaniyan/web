@@ -98,6 +98,8 @@ export default function MusicRoom() {
     '/albums/discovery.png',
     '/albums/divine.jpg',
     '/albums/orange.jpg',
+    '/albums/SMF.jpg',
+    '/albums/TIMELESS.jpg',
   ]);
 
   const goLeft = () => {
@@ -278,10 +280,12 @@ export default function MusicRoom() {
           const leanAngle = 0;
           return Array.from({ length: 5 }).map((_, i) => {
             const x = -0.8 + i * 0.4;
-            // Use images for the first four placeholders on the bottom shelf
+            // Use images for the first five placeholders on the bottom shelf and the first on the top shelf
             let matProps = {};
-            if (row === 0 && i < 4) {
+            if (row === 0 && i < 5) {
               matProps = { map: albumTextures[i], color: 'white' };
+            } else if (row === 1 && i === 0) {
+              matProps = { map: albumTextures[5], color: 'white' };
             } else {
               matProps = { color: row === 0 ? '#e0e0e0' : '#c0c0c0' };
             }
