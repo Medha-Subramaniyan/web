@@ -2,7 +2,7 @@ import { Canvas, useFrame, useLoader } from '@react-three/fiber'
 import { useRef, useState, Suspense, useMemo } from 'react'
 import { a, useSpring } from '@react-spring/three'
 import * as THREE from 'three'
-import { useGLTF, Html } from '@react-three/drei'
+import { useGLTF } from '@react-three/drei'
 
 type AnimatedCameraProps = { angle: number, onRest: () => void }
 
@@ -63,7 +63,6 @@ function MonsteraPlant({ position }: { position: [number, number, number] }) {
 
 export default function MusicRoom() {
   const [angle, setAngle] = useState(0)
-  const [hoveredAlbum, setHoveredAlbum] = useState<number | null>(null)
 
   // Load carpet texture
   const carpetTexture = useLoader(
@@ -92,21 +91,6 @@ export default function MusicRoom() {
   woodColor.repeat.set(1, 1)
   woodNormal.repeat.set(1, 1)
   woodRoughness.repeat.set(1, 1)
-
-  // Album data
-  const albums = [
-    { texture: '/albums/GKMC.jpg', artist: 'Kendrick Lamar', title: 'Good Kid, M.A.A.D City' },
-    { texture: '/albums/discovery.webp', artist: 'Daft Punk', title: 'Discovery' },
-    { texture: '/albums/divine.jpg', artist: 'Mac Miller', title: 'The Divine Feminine' },
-    { texture: '/albums/orange.jpg', artist: 'Frank Ocean', title: 'Channel Orange' },
-    { texture: '/albums/laur.jpeg', artist: 'Lauryn Hill', title: 'The Miseducation of Lauryn Hill' },
-    { texture: '/albums/TIMELESS.jpg', artist: 'Kaytranada', title: 'TIMELESS' },
-    { texture: '/albums/HJJH.jpg', artist: 'Travis Scott & Quavo', title: 'Huncho Jack, Jack Huncho' },
-    { texture: '/albums/BPL.jpeg', artist: 'D. Savage', title: 'BPL' },
-    { texture: '/albums/1999.jpeg', artist: 'Joey Bada$$', title: '1999' },
-    { texture: '/albums/cole.webp', artist: 'J. Cole', title: '4 Your Eyez Only' },
-  ];
-  const albumTextures = useLoader(THREE.TextureLoader, albums.map(a => a.texture));
 
   const goLeft = () => {
     setAngle(prev => prev - Math.PI / 2)
@@ -286,37 +270,15 @@ export default function MusicRoom() {
           const leanAngle = 0;
           return Array.from({ length: 5 }).map((_, i) => {
             const x = -0.8 + i * 0.4;
-            const albumIdx = row * 5 + i;
-            let matProps = {};
-            matProps = { map: albumTextures[albumIdx], color: 'white' };
             return (
               <mesh
                 key={`album-back-${row}-${i}`}
                 position={[x, albumY, z]}
                 rotation={[leanAngle, 0, 0]}
                 castShadow
-                onPointerOver={() => setHoveredAlbum(albumIdx)}
-                onPointerOut={() => setHoveredAlbum(null)}
               >
                 <boxGeometry args={[0.32, 0.32, 0.03]} />
-                <meshStandardMaterial {...matProps} />
-                {hoveredAlbum === albumIdx && (
-                  <Html position={[0, 0.25, 0]} center>
-                    <div style={{
-                      background: 'rgba(0,0,0,0.85)',
-                      color: 'white',
-                      padding: '6px 14px',
-                      borderRadius: '8px',
-                      fontSize: '0.95rem',
-                      whiteSpace: 'nowrap',
-                      boxShadow: '0 2px 8px rgba(0,0,0,0.25)',
-                      pointerEvents: 'none',
-                    }}>
-                      <strong>{albums[albumIdx].artist}</strong><br />
-                      {albums[albumIdx].title}
-                    </div>
-                  </Html>
-                )}
+                <meshStandardMaterial color={row === 0 ? '#e0e0e0' : '#c0c0c0'} />
               </mesh>
             );
           });
