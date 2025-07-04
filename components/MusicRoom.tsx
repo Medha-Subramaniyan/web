@@ -2,7 +2,22 @@ import { Canvas, useFrame, useLoader } from '@react-three/fiber'
 import { useRef, useState, Suspense, useMemo } from 'react'
 import { a, useSpring } from '@react-spring/three'
 import * as THREE from 'three'
-import { useGLTF } from '@react-three/drei'
+import { useGLTF, Html } from '@react-three/drei'
+import albumData from '../data/ROOM_playlist_album_image_mapping_ordered.json'
+
+// Custom mapping for the 10 specific albums on the front wall
+const frontWallAlbums = [
+  32, // Good Kid, M.A.A.D City - Kendrick Lamar
+  33, // Discovery - Daft Punk  
+  34, // The Divine Feminine - Mac Miller
+  35, // channel ORANGE - Frank Ocean
+  40, // Kind Of Blue - Miles Davis
+  39, // BPL - D. Savage
+  36, // Huncho Jack, Jack Huncho - Huncho Jack
+  37, // 4 Your Eyez Only - J. Cole
+  38, // 1999 - Joey Bada$$
+  31, // TIMELESS - KAYTRANADA
+]
 
 type AnimatedCameraProps = { angle: number, onRest: () => void }
 
@@ -63,6 +78,7 @@ function MonsteraPlant({ position }: { position: [number, number, number] }) {
 
 export default function MusicRoom() {
   const [angle, setAngle] = useState(0)
+  const [hoveredAlbum, setHoveredAlbum] = useState<number | null>(null)
 
   // Load carpet texture
   const carpetTexture = useLoader(
@@ -91,6 +107,38 @@ export default function MusicRoom() {
   woodColor.repeat.set(1, 1)
   woodNormal.repeat.set(1, 1)
   woodRoughness.repeat.set(1, 1)
+
+  // Load album textures with error handling - using Spotify URLs
+  const albumTextures = useMemo(() => {
+    const textures: THREE.Texture[] = []
+    albumData.forEach((album, index) => {
+      try {
+        const texture = new THREE.TextureLoader().load(
+          album.spotify_image_url, // Use Spotify image URL instead of local path
+          undefined,
+          undefined,
+          (error) => {
+            console.warn(`Failed to load texture for album ${index}:`, error)
+          }
+        )
+        textures.push(texture)
+      } catch (error) {
+        console.warn(`Error loading texture for album ${index}:`, error)
+        // Create a fallback texture
+        const canvas = document.createElement('canvas')
+        canvas.width = 64
+        canvas.height = 64
+        const ctx = canvas.getContext('2d')
+        if (ctx) {
+          ctx.fillStyle = index % 2 === 0 ? '#e0e0e0' : '#c0c0c0'
+          ctx.fillRect(0, 0, 64, 64)
+        }
+        const fallbackTexture = new THREE.CanvasTexture(canvas)
+        textures.push(fallbackTexture)
+      }
+    })
+    return textures
+  }, [])
 
   const goLeft = () => {
     setAngle(prev => prev - Math.PI / 2)
@@ -261,7 +309,7 @@ export default function MusicRoom() {
           <boxGeometry args={[2.0, 0.08, 0.18]} />
           <meshStandardMaterial map={woodColor} normalMap={woodNormal} roughnessMap={woodRoughness} />
         </mesh>
-        {/* Album placeholders for back wall shelves */}
+        {/* Back wall - 10 specific albums */}
         {[0, 1].map((row) => {
           const shelfY = row === 0 ? 1.15 : 1.65;
           const albumHeight = 0.32;
@@ -270,20 +318,44 @@ export default function MusicRoom() {
           const leanAngle = 0;
           return Array.from({ length: 5 }).map((_, i) => {
             const x = -0.8 + i * 0.4;
+            const backWallIndex = row * 5 + i;
+            const albumDataIndex = frontWallAlbums[backWallIndex] - 1; // Convert rank to 0-based index
+            const album = albumData[albumDataIndex];
+            const texture = albumTextures[albumDataIndex];
+            
             return (
               <mesh
                 key={`album-back-${row}-${i}`}
                 position={[x, albumY, z]}
                 rotation={[leanAngle, 0, 0]}
                 castShadow
+                onPointerOver={() => setHoveredAlbum(albumDataIndex)}
+                onPointerOut={() => setHoveredAlbum(null)}
               >
                 <boxGeometry args={[0.32, 0.32, 0.03]} />
-                <meshStandardMaterial color={row === 0 ? '#e0e0e0' : '#c0c0c0'} />
+                <meshStandardMaterial map={texture} color="white" />
+                {hoveredAlbum === albumDataIndex && album && (
+                  <Html position={[0, 0.25, 0]} center>
+                    <div style={{
+                      background: 'rgba(0,0,0,0.85)',
+                      color: 'white',
+                      padding: '6px 14px',
+                      borderRadius: '8px',
+                      fontSize: '0.95rem',
+                      whiteSpace: 'nowrap',
+                      boxShadow: '0 2px 8px rgba(0,0,0,0.25)',
+                      pointerEvents: 'none',
+                    }}>
+                      <strong>{album.artist}</strong><br />
+                      {album.name}
+                    </div>
+                  </Html>
+                )}
               </mesh>
             );
           });
         })}
-        {/* Album placeholders for front wall shelves */}
+        {/* Front wall - remaining albums above stereo and plants */}
         {[0, 1].map((row) => {
           const shelfY = row === 0 ? 1.0 : 1.5;
           const albumHeight = 0.32;
@@ -292,20 +364,43 @@ export default function MusicRoom() {
           const leanAngle = 0;
           return Array.from({ length: 5 }).map((_, i) => {
             const x = -0.8 + i * 0.4;
+            const albumIdx = row * 5 + i;
+            const album = albumData[albumIdx];
+            const texture = albumTextures[albumIdx];
+            
             return (
               <mesh
                 key={`album-front-${row}-${i}`}
                 position={[x, albumY, z]}
                 rotation={[leanAngle, Math.PI, 0]}
                 castShadow
+                onPointerOver={() => setHoveredAlbum(albumIdx)}
+                onPointerOut={() => setHoveredAlbum(null)}
               >
                 <boxGeometry args={[0.32, 0.32, 0.03]} />
-                <meshStandardMaterial color={row === 0 ? '#e0e0e0' : '#c0c0c0'} />
+                <meshStandardMaterial map={texture} color="white" />
+                {hoveredAlbum === albumIdx && album && (
+                  <Html position={[0, 0.25, 0]} center>
+                    <div style={{
+                      background: 'rgba(0,0,0,0.85)',
+                      color: 'white',
+                      padding: '6px 14px',
+                      borderRadius: '8px',
+                      fontSize: '0.95rem',
+                      whiteSpace: 'nowrap',
+                      boxShadow: '0 2px 8px rgba(0,0,0,0.25)',
+                      pointerEvents: 'none',
+                    }}>
+                      <strong>{album.artist}</strong><br />
+                      {album.name}
+                    </div>
+                  </Html>
+                )}
               </mesh>
             );
           });
         })}
-        {/* Album placeholders for left wall shelves */}
+        {/* Left wall - remaining albums */}
         {[0, 1].map((row) => {
           const shelfY = row === 0 ? 1.0 : 1.5;
           const albumHeight = 0.32;
@@ -314,20 +409,43 @@ export default function MusicRoom() {
           const leanAngle = 0;
           return Array.from({ length: 5 }).map((_, i) => {
             const z = -0.8 + i * 0.4;
+            const albumIdx = 10 + row * 5 + i; // Start from album 10
+            const album = albumData[albumIdx];
+            const texture = albumTextures[albumIdx];
+            
             return (
               <mesh
                 key={`album-left-${row}-${i}`}
                 position={[x, albumY, z]}
                 rotation={[leanAngle, Math.PI / 2, 0]}
                 castShadow
+                onPointerOver={() => setHoveredAlbum(albumIdx)}
+                onPointerOut={() => setHoveredAlbum(null)}
               >
                 <boxGeometry args={[0.32, 0.32, 0.03]} />
-                <meshStandardMaterial color={row === 0 ? '#e0e0e0' : '#c0c0c0'} />
+                <meshStandardMaterial map={texture} color="white" />
+                {hoveredAlbum === albumIdx && album && (
+                  <Html position={[0, 0.25, 0]} center>
+                    <div style={{
+                      background: 'rgba(0,0,0,0.85)',
+                      color: 'white',
+                      padding: '6px 14px',
+                      borderRadius: '8px',
+                      fontSize: '0.95rem',
+                      whiteSpace: 'nowrap',
+                      boxShadow: '0 2px 8px rgba(0,0,0,0.25)',
+                      pointerEvents: 'none',
+                    }}>
+                      <strong>{album.artist}</strong><br />
+                      {album.name}
+                    </div>
+                  </Html>
+                )}
               </mesh>
             );
           });
         })}
-        {/* Album placeholders for right wall shelves */}
+        {/* Right wall - remaining albums */}
         {[0, 1].map((row) => {
           const shelfY = row === 0 ? 1.0 : 1.5;
           const albumHeight = 0.32;
@@ -336,15 +454,38 @@ export default function MusicRoom() {
           const leanAngle = 0;
           return Array.from({ length: 5 }).map((_, i) => {
             const z = -0.8 + i * 0.4;
+            const albumIdx = 20 + row * 5 + i; // Start from album 20
+            const album = albumData[albumIdx];
+            const texture = albumTextures[albumIdx];
+            
             return (
               <mesh
                 key={`album-right-${row}-${i}`}
                 position={[x, albumY, z]}
                 rotation={[leanAngle, -Math.PI / 2, 0]}
                 castShadow
+                onPointerOver={() => setHoveredAlbum(albumIdx)}
+                onPointerOut={() => setHoveredAlbum(null)}
               >
                 <boxGeometry args={[0.32, 0.32, 0.03]} />
-                <meshStandardMaterial color={row === 0 ? '#e0e0e0' : '#c0c0c0'} />
+                <meshStandardMaterial map={texture} color="white" />
+                {hoveredAlbum === albumIdx && album && (
+                  <Html position={[0, 0.25, 0]} center>
+                    <div style={{
+                      background: 'rgba(0,0,0,0.85)',
+                      color: 'white',
+                      padding: '6px 14px',
+                      borderRadius: '8px',
+                      fontSize: '0.95rem',
+                      whiteSpace: 'nowrap',
+                      boxShadow: '0 2px 8px rgba(0,0,0,0.25)',
+                      pointerEvents: 'none',
+                    }}>
+                      <strong>{album.artist}</strong><br />
+                      {album.name}
+                    </div>
+                  </Html>
+                )}
               </mesh>
             );
           });
