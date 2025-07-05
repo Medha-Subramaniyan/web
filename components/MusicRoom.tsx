@@ -44,9 +44,22 @@ function AnimatedCamera({ angle, onRest }: AnimatedCameraProps) {
   return <perspectiveCamera ref={cameraRef} position={[0, 1.2, 0]} fov={60} />
 }
 
-function VintageStereo({ position }: { position: [number, number, number] }) {
+function VintageStereo({ position, onHover, onLeave }: { 
+  position: [number, number, number],
+  onHover: () => void,
+  onLeave: () => void
+}) {
   const { scene } = useGLTF('/models/vintage_stereo_hi-fi_stack_w_speakers/scene.gltf')
-  return <primitive object={scene} position={position} scale={[0.0045, 0.0045, 0.0045]} />
+  
+  return (
+    <primitive 
+      object={scene} 
+      position={position} 
+      scale={[0.0045, 0.0045, 0.0045]}
+      onPointerEnter={onHover}
+      onPointerLeave={onLeave}
+    />
+  )
 }
 
 function MonsteraPlant({ position }: { position: [number, number, number] }) {
@@ -79,6 +92,7 @@ function MonsteraPlant({ position }: { position: [number, number, number] }) {
 export default function MusicRoom() {
   const [angle, setAngle] = useState(0)
   const [hoveredAlbum, setHoveredAlbum] = useState<number | null>(null)
+  const [hoveredStereo, setHoveredStereo] = useState(false)
 
   // Load carpet texture
   const carpetTexture = useLoader(
@@ -139,6 +153,14 @@ export default function MusicRoom() {
     })
     return textures
   }, [])
+
+  const handleStereoHover = () => {
+    setHoveredStereo(true)
+  }
+
+  const handleStereoLeave = () => {
+    setHoveredStereo(false)
+  }
 
   const goLeft = () => {
     setAngle(prev => prev - Math.PI / 2)
@@ -266,7 +288,30 @@ export default function MusicRoom() {
         </mesh>
         {/* Vintage Stereo Hi-Fi Stack */}
         <Suspense fallback={null}>
-          <VintageStereo position={[0.055, 0.1, -1.9]} />
+          <VintageStereo 
+            position={[0.055, 0.1, -1.9]} 
+            onHover={handleStereoHover}
+            onLeave={handleStereoLeave}
+          />
+          {/* Stereo hover message */}
+          {hoveredStereo && (
+            <Html position={[0.055, 0.4, -1.9]} center>
+              <div style={{
+                background: 'rgba(0,0,0,0.85)',
+                color: 'white',
+                padding: '8px 16px',
+                borderRadius: '8px',
+                fontSize: '0.9rem',
+                whiteSpace: 'nowrap',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.25)',
+                pointerEvents: 'none',
+                textAlign: 'center',
+                border: '1px solid rgba(255,255,255,0.2)',
+              }}>
+                🎵 Open Song/Playlist Recommender
+              </div>
+            </Html>
+          )}
         </Suspense>
         {/* Two cloned Monstera plants */}
         <Suspense fallback={null}>
