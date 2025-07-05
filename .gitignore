@@ -16,19 +16,6 @@
 # next.js
 /.next/
 /out/
-*.jpg
-*.jpeg
-*.png
-*.gif
-*.bmp
-*.tiff
-*.tif
-*.webp
-*.svg
-*.ico
-*.avif
-*.heic
-*.heif
 *.mp4
 *.mp3
 *.wav
@@ -63,4 +50,3 @@ next-env.d.ts
 public/Carpet016_4K-PNG/
 public/Wood004_4K-PNG/
 public/models/
-public/albums/
