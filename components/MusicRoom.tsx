@@ -3,6 +3,7 @@ import { useRef, useState, Suspense, useMemo } from 'react'
 import { a, useSpring } from '@react-spring/three'
 import * as THREE from 'three'
 import { useGLTF, Html } from '@react-three/drei'
+import Link from 'next/link'
 import albumData from '../data/ROOM_playlist_album_image_mapping_ordered.json'
 
 // Custom mapping for the 10 specific albums on the front wall
@@ -44,10 +45,8 @@ function AnimatedCamera({ angle, onRest }: AnimatedCameraProps) {
   return <perspectiveCamera ref={cameraRef} position={[0, 1.2, 0]} fov={60} />
 }
 
-function VintageStereo({ position, onHover, onLeave }: { 
-  position: [number, number, number],
-  onHover: () => void,
-  onLeave: () => void
+function VintageStereo({ position }: { 
+  position: [number, number, number]
 }) {
   const { scene } = useGLTF('/models/vintage_stereo_hi-fi_stack_w_speakers/scene.gltf')
   
@@ -56,8 +55,6 @@ function VintageStereo({ position, onHover, onLeave }: {
       object={scene} 
       position={position} 
       scale={[0.0045, 0.0045, 0.0045]}
-      onPointerEnter={onHover}
-      onPointerLeave={onLeave}
     />
   )
 }
@@ -92,7 +89,6 @@ function MonsteraPlant({ position }: { position: [number, number, number] }) {
 export default function MusicRoom() {
   const [angle, setAngle] = useState(0)
   const [hoveredAlbum, setHoveredAlbum] = useState<number | null>(null)
-  const [hoveredStereo, setHoveredStereo] = useState(false)
 
   // Load carpet texture
   const carpetTexture = useLoader(
@@ -154,14 +150,6 @@ export default function MusicRoom() {
     return textures
   }, [])
 
-  const handleStereoHover = () => {
-    setHoveredStereo(true)
-  }
-
-  const handleStereoLeave = () => {
-    setHoveredStereo(false)
-  }
-
   const goLeft = () => {
     setAngle(prev => prev - Math.PI / 2)
   }
@@ -217,7 +205,7 @@ export default function MusicRoom() {
       >
         &#8594;
       </button>
-      <Canvas>
+      <Canvas shadows camera={{ position: [0, 1.2, 0], fov: 60 }}>
         <AnimatedCamera angle={angle} onRest={() => {}} />
         {/* Floor (carpet texture) */}
         <mesh position={[0, 0, 0]} rotation={[-Math.PI / 2, 0, 0]}>
@@ -288,30 +276,7 @@ export default function MusicRoom() {
         </mesh>
         {/* Vintage Stereo Hi-Fi Stack */}
         <Suspense fallback={null}>
-          <VintageStereo 
-            position={[0.055, 0.1, -1.9]} 
-            onHover={handleStereoHover}
-            onLeave={handleStereoLeave}
-          />
-          {/* Stereo hover message */}
-          {hoveredStereo && (
-            <Html position={[0.055, 0.4, -1.9]} center>
-              <div style={{
-                background: 'rgba(0,0,0,0.85)',
-                color: 'white',
-                padding: '8px 16px',
-                borderRadius: '8px',
-                fontSize: '0.9rem',
-                whiteSpace: 'nowrap',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.25)',
-                pointerEvents: 'none',
-                textAlign: 'center',
-                border: '1px solid rgba(255,255,255,0.2)',
-              }}>
-                🎵 Open Song/Playlist Recommender
-              </div>
-            </Html>
-          )}
+          <VintageStereo position={[0.055, 0.1, -1.9]} />
         </Suspense>
         {/* Two cloned Monstera plants */}
         <Suspense fallback={null}>
@@ -539,6 +504,17 @@ export default function MusicRoom() {
         <ambientLight intensity={0.7} />
         <pointLight position={[0, 2, 2]} intensity={0.7} />
       </Canvas>
+      
+      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
+        <a 
+          href="/spotify-analytics/index.html"
+          className="rounded bg-indigo-600 px-6 py-3 text-white hover:bg-indigo-700 transition-colors"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          🎵 Open Song/Playlist Recommender
+        </a>
+      </div>
     </div>
   )
 } 
