@@ -4,14 +4,14 @@ import { a, useSpring } from '@react-spring/three'
 import * as THREE from 'three'
 import { useGLTF, Html } from '@react-three/drei'
 import Link from 'next/link'
-import albumData from '../data/ROOM_playlist_album_image_mapping_ordered.json'
+import albumData from '../public/spotify-analytics/data/ROOM_playlist_album_image_mapping_with_metadata.json'
 
 // Custom mapping for the 10 specific albums on the front wall
 const frontWallAlbums = [
   32, // Good Kid, M.A.A.D City - Kendrick Lamar
   33, // Discovery - Daft Punk  
   34, // The Divine Feminine - Mac Miller
-  35, // channel ORANGE - Frank Ocean
+  35, // channel ORANGE - Frank Oceanl
   40, // Kind Of Blue - Miles Davis
   39, // BPL - D. Savage
   36, // Huncho Jack, Jack Huncho - Huncho Jack
@@ -124,7 +124,7 @@ export default function MusicRoom() {
     albumData.forEach((album, index) => {
       try {
         const texture = new THREE.TextureLoader().load(
-          album.spotify_image_url, // Use Spotify image URL instead of local path
+          album.spotify_image_url,
           undefined,
           undefined,
           (error) => {
@@ -148,7 +148,7 @@ export default function MusicRoom() {
       }
     })
     return textures
-  }, [])
+  }, [albumData])
 
   const goLeft = () => {
     setAngle(prev => prev - Math.PI / 2)

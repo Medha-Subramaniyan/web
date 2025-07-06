@@ -13,6 +13,10 @@ const nextConfig: NextConfig = {
         source: '/spotify-analytics/',
         destination: '/spotify-analytics/index.html',
       },
+      {
+        source: '/albums/:path*',
+        destination: '/spotify-analytics/albums/:path*',
+      },
     ]
   },
 }

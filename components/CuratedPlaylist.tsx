@@ -1,5 +1,5 @@
-import React, { useMemo, useEffect, useState } from "react";
-import albumData from "../data/ROOM_playlist_album_image_mapping_ordered.json";
+import React, { useMemo } from "react";
+import albumData from "../public/spotify-analytics/data/ROOM_playlist_album_image_mapping_with_metadata.json";
 
 interface CuratedPlaylistProps {
   selectedGenres: string[];
@@ -7,187 +7,131 @@ interface CuratedPlaylistProps {
   onBack: () => void;
 }
 
+interface Album {
+  rank: number;
+  playlist_position: number;
+  artist: string;
+  name: string;
+  local_image: string;
+  spotify_url: string;
+  spotify_image_url: string;
+  track_count: number;
+  avg_popularity: number;
+  track_name: string;
+  genres: string[];
+  moods: string[];
+  top_tracks: string[];
+}
+
+interface PlaylistTrack {
+  name: string;
+  albumName: string;
+  albumArtist: string;
+  albumImage: string;
+  albumSpotify: string;
+}
+
 export default function CuratedPlaylist({ selectedGenres, selectedMoods, onBack }: CuratedPlaylistProps) {
-  // Filter albums by selected genres/moods with fallback strategy
-  const matchingAlbums = useMemo(() => {
-    // First try: exact matches for both genres and moods
-    let filtered = albumData.filter(album => {
-      const hasMatchingGenres = selectedGenres.length === 0 || 
-        selectedGenres.some((genre: string) => album.genres?.includes(genre));
-      const hasMatchingMoods = selectedMoods.length === 0 || 
-        selectedMoods.some((mood: string) => album.moods?.includes(mood));
-      return hasMatchingGenres && hasMatchingMoods;
-    });
-
-    // If no exact matches, try genre-only matches
-    if (filtered.length === 0 && selectedGenres.length > 0) {
-      filtered = albumData.filter(album => 
-        selectedGenres.some((genre: string) => album.genres?.includes(genre))
-      );
-    }
-
-    // If still no matches, try mood-only matches
-    if (filtered.length === 0 && selectedMoods.length > 0) {
-      filtered = albumData.filter(album => 
-        selectedMoods.some((mood: string) => album.moods?.includes(mood))
-      );
-    }
-
-    // If still no matches, return all albums
-    if (filtered.length === 0) {
-      filtered = albumData;
-    }
-
-    return filtered;
+  // Generate explanation
+  const explanation = useMemo(() => {
+    return (
+      <>
+        <span className="font-semibold text-amber-900">Why these songs?</span> <br />
+        Based on your favorite genres ({selectedGenres.join(", ")}) and your vibe ({selectedMoods.join(", ")}), I've curated the following playlist for you based on my taste. <br />
+        <span className="text-amber-700">I hope you find something you enjoy!</span>
+      </>
+    );
   }, [selectedGenres, selectedMoods]);
 
-  // Generate playlist from matching albums
+  // Generate playlist based on selected genres and moods
   const playlist = useMemo(() => {
+    // Filter albums based on selected genres and moods
+    const matchingAlbums = (albumData as Album[]).filter((album: Album) => {
+      const genreMatch = selectedGenres.length === 0 || 
+        selectedGenres.some(genre => 
+          album.genres.some((g: string) => 
+            g.toLowerCase().includes(genre.toLowerCase())
+          )
+        );
+      
+      const moodMatch = selectedMoods.length === 0 || 
+        selectedMoods.some(mood => 
+          album.moods.some((m: string) => 
+            m.toLowerCase().includes(mood.toLowerCase())
+          )
+        );
+      
+      return genreMatch && moodMatch;
+    });
+
+    // Step 1: Build a list of lists (tracks per album)
     const tracksByAlbum = matchingAlbums.map(album => {
       if (album.top_tracks && album.top_tracks.length > 0) {
         return album.top_tracks.slice(0, 4).map(track => ({
           name: track,
           albumName: album.name,
           albumArtist: album.artist,
-          albumImage: album.local_image,
+          albumImage: album.spotify_image_url,
           albumSpotify: album.spotify_url,
-          spotifyImageUrl: album.spotify_image_url
         }));
       }
       return [];
     }).filter(arr => arr.length > 0);
 
-    // Interleave tracks from different albums for variety
-    const interleaved = [];
-    const maxSongs = 20;
-    const minSongs = 8;
-    let round = 0;
-    let added = 0;
-
-    while (interleaved.length < maxSongs && added < tracksByAlbum.length * 4) {
-      let anyAddedThisRound = false;
-      
-      for (let i = 0; i < tracksByAlbum.length; i++) {
-        const albumTracks = tracksByAlbum[i];
-        if (round < albumTracks.length && interleaved.length < maxSongs) {
-          interleaved.push(albumTracks[round]);
-          anyAddedThisRound = true;
-        }
-      }
-      
-      if (!anyAddedThisRound) break;
-      round++;
-      added += tracksByAlbum.length;
-    }
-
-    // Ensure we have at least minSongs
-    if (interleaved.length < minSongs) {
-      const remainingTracks = tracksByAlbum.flat().slice(interleaved.length, minSongs - interleaved.length);
-      interleaved.push(...remainingTracks);
-    }
-
-    return interleaved;
-  }, [matchingAlbums]);
+    // Shuffle and limit to 20 tracks
+    const shuffled = tracksByAlbum.flat().sort(() => Math.random() - 0.5);
+    return shuffled.slice(0, 20);
+  }, [selectedGenres, selectedMoods]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-red-50 p-6">
-      <div className="max-w-4xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <button
-            onClick={onBack}
-            className="mb-4 px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors"
-          >
-            ← Back to Selection
-          </button>
-          <h1 className="text-4xl font-bold text-amber-900 mb-4">
-            Your Curated Soundscape
-          </h1>
-          <p className="text-lg text-amber-700 max-w-2xl mx-auto">
-            Based on your selected genres ({selectedGenres.join(", ")}) and your vibe ({selectedMoods.join(", ")}), 
-            I've curated the following playlist for you based on my taste. 
-            <br />
-            <span className="text-amber-700">I hope you find something you enjoy!</span>
-          </p>
+    <div className="bg-gradient-to-br from-amber-50 via-orange-50 to-red-50 min-h-screen">
+      <header className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-amber-200">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-end items-center">
+          <button onClick={onBack} className="text-amber-700 hover:text-amber-900 font-medium">← Back</button>
         </div>
+      </header>
 
-        {/* Playlist */}
-        <div className="bg-white rounded-xl shadow-lg p-6">
-          <h2 className="text-2xl font-semibold text-amber-900 mb-6">
-            Curated Playlist ({playlist.length} tracks)
-          </h2>
-          
-          <div className="space-y-4">
-            {playlist.map((track, index) => (
-              <div
-                key={`${track.albumArtist}-${track.name}-${index}`}
-                className="flex items-center p-4 bg-gradient-to-r from-amber-50 to-orange-50 rounded-lg border border-amber-200 hover:shadow-md transition-shadow"
-              >
-                {/* Track Number */}
-                <div className="w-8 h-8 bg-amber-600 text-white rounded-full flex items-center justify-center text-sm font-semibold mr-4">
-                  {index + 1}
-                </div>
-
-                {/* Album Cover */}
+      <main className="pt-28 max-w-3xl mx-auto px-4">
+        <h2 className="serif text-3xl md:text-4xl font-semibold text-amber-900 mb-4 italic text-center">
+          Your Curated Soundscape
+        </h2>
+        <div className="bg-white/70 rounded-xl p-6 mb-8 shadow vinyl-shadow text-center">
+          {explanation}
+        </div>
+        <div className="space-y-6">
+          {playlist.map((track: PlaylistTrack, idx: number) => (
+              <div key={idx} className="flex items-center bg-white/80 rounded-lg p-4 shadow hover:bg-amber-100/60 transition">
                 <div className="w-20 h-20 rounded-lg mr-4 border border-amber-200 overflow-hidden bg-amber-100 flex items-center justify-center shadow-md hover:shadow-lg transition-shadow">
                   <img 
-                    src={track.spotifyImageUrl}
-                    alt={`${track.albumName} by ${track.albumArtist}`}
+                    src={track.albumImage} 
+                    alt={track.albumName} 
                     className="w-full h-full object-cover"
-                    onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
-                      console.log('Failed to load Spotify image:', track.spotifyImageUrl);
-                      const target = e.currentTarget;
-                      target.src = track.albumImage;
-                      target.onerror = () => {
-                        console.log('Failed to load local image:', track.albumImage);
-                        target.style.display = 'none';
-                        const nextSibling = target.nextSibling as HTMLElement;
-                        if (nextSibling) {
-                          nextSibling.style.display = 'flex';
-                        }
-                      };
+                    onLoad={() => console.log('Successfully loaded image:', track.albumImage)}
+                    onError={(e) => {
+                      console.log('Failed to load image:', track.albumImage);
+                      const target = e.target as HTMLImageElement;
+                      target.style.display = 'none';
+                      const nextSibling = target.nextSibling as HTMLElement;
+                      if (nextSibling) {
+                        nextSibling.style.display = 'flex';
+                      }
                     }}
                   />
                   <div className="hidden w-full h-full items-center justify-center text-amber-600 bg-amber-50">
                     <i className="fa-solid fa-music text-xl"></i>
                   </div>
                 </div>
-
-                {/* Track Info */}
-                <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-amber-900 mb-1">
-                    {track.name}
-                  </h3>
-                  <p className="text-amber-700 font-medium">
-                    {track.albumArtist}
-                  </p>
-                  <p className="text-amber-600 text-sm">
-                    {track.albumName}
-                  </p>
+                <div className="flex-1 min-w-0">
+                  <div className="font-semibold text-amber-900 truncate">{track.name}</div>
+                  <div className="text-amber-700 text-sm truncate">{track.albumArtist} — <span className="italic">{track.albumName}</span></div>
                 </div>
-
-                {/* Spotify Link */}
-                <a
-                  href={track.albumSpotify}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center"
-                >
-                  <i className="fab fa-spotify mr-2"></i>
-                  Listen
+                <a href={track.albumSpotify} target="_blank" rel="noopener noreferrer" className="ml-4 text-amber-600 hover:text-green-600">
+                  <i className="fa-brands fa-spotify text-2xl"></i>
                 </a>
               </div>
             ))}
-          </div>
         </div>
-
-        {/* Footer */}
-        <div className="text-center mt-8 text-amber-700">
-          <p className="text-sm">
-            All album covers and track information are sourced from Spotify.
-          </p>
-        </div>
-      </div>
+      </main>
     </div>
   );
 } 
