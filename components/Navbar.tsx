@@ -25,36 +25,15 @@ export default function Navbar({ hideHomeLink = false }: NavbarProps) {
   ].filter((link): link is NavLink => Boolean(link));
 
   return (
-    <nav className="flex justify-center py-8 bg-transparent">
-      <ul className="flex px-8 py-2 rounded-full border border-gray-300 bg-white/80 backdrop-blur-md shadow-sm" style={{ gap: '100px' }}>
-        {navLinks.map((link) => (
-          <li key={link.href}>
-            {link.external ? (
-              <a
-                href={link.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`text-lg px-2 transition-colors duration-200 font-medium text-gray-500 hover:text-gray-900`}
-              >
-                {link.label}
-              </a>
-            ) : (
-              <Link href={link.href}>
-                <span
-                  className={
-                    `text-lg px-2 transition-colors duration-200 ` +
-                    (router.pathname === link.href
-                      ? 'font-bold text-gray-900'
-                      : 'font-medium text-gray-500 hover:text-gray-900')
-                  }
-                >
-                  {link.label}
-                </span>
-              </Link>
-            )}
-          </li>
-        ))}
-      </ul>
+    <nav className="sticky top-0 bg-white/80 backdrop-blur border-b border-gray-200 z-50 flex gap-6 px-8 py-4 rounded-b-2xl shadow">
+      {navLinks.map((link) => (
+        <Link key={link.href} href={link.href} className={
+          'text-gray-800 font-medium hover:underline' +
+          (router.pathname === link.href ? ' font-bold underline' : '')
+        }>
+          {link.label}
+        </Link>
+      ))}
     </nav>
   )
 }
