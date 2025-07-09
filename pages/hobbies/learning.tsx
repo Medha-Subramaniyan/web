@@ -25,91 +25,30 @@ export default function Learning() {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-50 to-cyan-50">
-      <Navbar />
-      <main className="flex flex-col items-center justify-center flex-1 pt-16 pb-24 px-4">
-        <div className="max-w-6xl w-full">
-          {/* Back button */}
-          <Link href="/hobbies" className="inline-flex items-center text-blue-600 hover:text-blue-800 mb-8 transition-colors">
-            <FaArrowLeft className="w-4 h-4 mr-2" />
-            Back to Hobbies
-          </Link>
-          
-          <div className="text-center mb-12">
-            <div className="flex justify-center mb-6">
-              <FaGraduationCap className="w-16 h-16 text-blue-600" />
-            </div>
-            <h1 className="text-4xl md:text-5xl font-extrabold text-gray-800 mb-4">Learning</h1>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Diving deep into different topics, visual artists, mediums, and creators who experiment across various artistic boundaries
-            </p>
+    <div className="min-h-screen bg-[#111827]">
+      <Navbar position="top" />
+      <main className="flex flex-col items-center justify-center min-h-screen pt-16 pb-24 z-10 px-4 font-outfit text-white">
+        <div className="w-full max-w-6xl">
+          <div className="flex items-center mb-8">
+            <Link href="/hobbies" className="flex items-center text-[#60a5fa] hover:opacity-80 transition-opacity duration-200">
+              <FaArrowLeft className="mr-2" />
+              Back to Hobbies
+            </Link>
           </div>
-          
-          {/* Learning Categories */}
+          <h1 className="text-5xl font-bold mb-8 text-white font-outfit">Learning</h1>
+          <p className="text-2xl mb-12 text-white font-outfit text-center max-w-3xl mx-auto">
+            I'm constantly diving into topics—from architecture and design, to biomimicry and ethics to neuroscience and geopolitics. Doing so helps me spark new ideas and stay inspired.
+          </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
             {learningCategories.map((category, index) => (
-              <div key={index} className="bg-white/70 backdrop-blur-sm rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow">
-                <div className="flex flex-col items-center text-center">
-                  <div className={`bg-gradient-to-br ${category.color} p-4 rounded-xl mb-6`}>
-                    <category.icon className="w-8 h-8 text-white" />
-                  </div>
-                  <h3 className="text-xl font-bold text-gray-800 mb-3">{category.title}</h3>
-                  <p className="text-gray-600 leading-relaxed">{category.description}</p>
+              <div key={index} className="bg-[#363B44] border border-[#5a5a5a]/40 rounded-[24px] p-8 text-center hover:transform hover:scale-105 transition-transform duration-200">
+                <div className={`w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center bg-gradient-to-br ${category.color}`}>
+                  <category.icon className="text-white text-2xl" />
                 </div>
+                <h3 className="text-2xl font-semibold mb-4 text-white">{category.title}</h3>
+                <p className="text-[#d1d5db] leading-relaxed">{category.description}</p>
               </div>
             ))}
-          </div>
-          
-          {/* Placeholder content */}
-          <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-8 shadow-lg">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Current Learning Focus</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-800">Topics I'm Exploring</h3>
-                <ul className="space-y-2 text-gray-600">
-                  <li className="flex items-center">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
-                    Digital Art & AI Integration
-                  </li>
-                  <li className="flex items-center">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
-                    Sustainable Design Practices
-                  </li>
-                  <li className="flex items-center">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
-                    Cross-Medium Artistic Expression
-                  </li>
-                  <li className="flex items-center">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
-                    Emerging Creative Technologies
-                  </li>
-                </ul>
-              </div>
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-800">Inspiring Artists</h3>
-                <ul className="space-y-2 text-gray-600">
-                  <li className="flex items-center">
-                    <div className="w-2 h-2 bg-cyan-500 rounded-full mr-3"></div>
-                    Contemporary Digital Artists
-                  </li>
-                  <li className="flex items-center">
-                    <div className="w-2 h-2 bg-cyan-500 rounded-full mr-3"></div>
-                    Mixed Media Innovators
-                  </li>
-                  <li className="flex items-center">
-                    <div className="w-2 h-2 bg-cyan-500 rounded-full mr-3"></div>
-                    Experimental Creators
-                  </li>
-                  <li className="flex items-center">
-                    <div className="w-2 h-2 bg-cyan-500 rounded-full mr-3"></div>
-                    Boundary-Pushing Designers
-                  </li>
-                </ul>
-              </div>
-            </div>
-            <p className="text-center text-gray-500 mt-8 italic">
-              Coming soon: Detailed explorations of topics and artists that inspire my creative journey
-            </p>
           </div>
         </div>
       </main>

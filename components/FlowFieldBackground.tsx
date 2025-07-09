@@ -1,17 +1,21 @@
 import dynamic from "next/dynamic";
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 const Sketch = dynamic(() => import("react-p5").then(mod => mod.default), { ssr: false });
 
 type Node = { x: number; y: number; vx: number; vy: number; };
 
 export default function FlowFieldBackground() {
   const nodesRef = useRef<Node[]>([]);
+  const p5Ref = useRef<any>(null);
   const numNodes = 65; // more nodes for higher frequency
   const nodeRadius = 100; // mouse influence
 
   // Initialize nodes
   const setup = (p5: any, canvasParentRef: any) => {
-    p5.createCanvas(p5.windowWidth, p5.windowHeight).parent(canvasParentRef);
+    p5Ref.current = p5;
+    const canvas = p5.createCanvas(p5.windowWidth, p5.windowHeight).parent(canvasParentRef);
+    canvas.style('display', 'block'); // Ensure canvas displays properly
+    
     nodesRef.current = [];
     for (let i = 0; i < numNodes; i++) {
       nodesRef.current.push({
@@ -22,6 +26,16 @@ export default function FlowFieldBackground() {
       });
     }
     p5.background(15, 18, 28, 255);
+  };
+
+  // Handle window resize
+  const windowResized = (p5: any) => {
+    p5.resizeCanvas(p5.windowWidth, p5.windowHeight);
+    // Redistribute nodes after resize
+    for (const node of nodesRef.current) {
+      node.x = p5.random(p5.width);
+      node.y = p5.random(p5.height);
+    }
   };
 
   // Helper: Find all triangles (Delaunay-like, not true Delaunay for speed)
@@ -107,8 +121,8 @@ export default function FlowFieldBackground() {
   };
 
   return (
-    <div className="fixed inset-0 -z-10 pointer-events-none">
-      <Sketch setup={setup} draw={draw} />
+    <div className="fixed inset-0 -z-10 pointer-events-none w-full h-full">
+      <Sketch setup={setup} draw={draw} windowResized={windowResized} />
     </div>
   );
 }

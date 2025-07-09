@@ -44,58 +44,142 @@ const substackEmbeds = [
 
 export default function DataAnalytics() {
   return (
-    <div className="min-h-screen flex flex-col bg-white">
-      <Navbar />
-      <main className="flex flex-col items-center flex-1 pt-16 pb-24 px-4">
-        <h1 className="text-4xl md:text-5xl font-extrabold text-blue-700 mb-6 text-center">Data Analytics</h1>
-        <p className="max-w-2xl text-lg text-gray-700 mb-10 text-center">
-          I specialize in building automated data pipelines, interactive dashboards, and actionable analytics for business and healthcare. My stack includes <span className="font-semibold">Python, R, SQL, and Tableau</span>. Here are some highlights from my career and projects:
+    <div className="min-h-screen flex flex-col bg-[#111827] font-outfit text-white">
+      <Navbar position="top" />
+      <main className="flex flex-col items-center flex-1 pt-16 pb-24 px-4 font-outfit text-white">
+        <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-6 text-center">Data Analytics</h1>
+        <p className="max-w-2xl text-lg text-white mb-10 text-center">
+          I specialize in building automated data pipelines, interactive dashboards, and actionable analytics for business, sports, and healthcare. My stack includes Python, R, SQL, and Tableau. Here are some highlights from my career and projects:
         </p>
-        <div className="max-w-3xl w-full mb-12 space-y-8">
-          <section>
-            <h2 className="text-2xl font-bold text-blue-800 mb-2">CORE Entertainment <span className="text-base font-medium text-gray-500">(Oct 2023 – Present)</span></h2>
-            <ul className="list-disc pl-6 text-gray-700">
-              <li>Automated a centralized reporting system in Python & SQL to track ticket sales, attendance, and bar revenue across 15+ events.</li>
-              <li>Designed Tableau dashboards that uncovered sales trends and peak traffic hours—boosting marketing ROI by 13%.</li>
-              <li>Created a real-time check-in and bar-sales tracker, enabling live insights for operations.</li>
-            </ul>
-          </section>
-          <section>
-            <h2 className="text-2xl font-bold text-blue-800 mb-2">Infectious Disease Professionals <span className="text-base font-medium text-gray-500">(May 2023 – Aug 2023)</span></h2>
-            <ul className="list-disc pl-6 text-gray-700">
-              <li>Cleaned and validated patient datasets in Python and Excel, cutting data errors by 18%.</li>
-              <li>Built Tableau reports that surfaced appointment-flow bottlenecks, leading to a 15% improvement in compliance.</li>
-            </ul>
-          </section>
-          <section>
-            <h2 className="text-2xl font-bold text-blue-800 mb-2">Code Ninjas <span className="text-base font-medium text-gray-500">(2019)</span></h2>
-            <ul className="list-disc pl-6 text-gray-700">
-              <li>Taught coding fundamentals and data concepts to students using Python and Scratch.</li>
-              <li>Developed interactive lessons and analytics projects to inspire the next generation of coders.</li>
-            </ul>
-          </section>
-        </div>
-        {/* Substack Articles */}
-        <section className="w-full max-w-3xl mb-16">
-          <h2 className="text-2xl font-bold text-indigo-700 mb-6">Featured Substack Articles</h2>
-          <div className="space-y-8">
-            {substackEmbeds.map((embed) => (
-              <div key={embed.id} className="w-full" dangerouslySetInnerHTML={{ __html: embed.html }} />
-            ))}
-          </div>
-        </section>
-        {/* Tableau Visualizations */}
-        <section className="w-full max-w-3xl">
-          <h2 className="text-2xl font-bold text-indigo-700 mb-6">Interactive Dashboards</h2>
-          <div className="space-y-12">
-            {tableauEmbeds.map((viz) => (
-              <div key={viz.id} className="w-full mb-8">
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">{viz.title}</h3>
-                <div dangerouslySetInnerHTML={{ __html: viz.html }} />
+        <div className="w-full flex flex-row justify-between min-h-[60vh] items-start">
+          {/* Left: Experience */}
+          <div className="flex flex-col gap-[15px] ml-16 justify-center">
+            <span className="font-outfit text-xl font-semibold mb-4 ml-2">Experience</span>
+            {/* Bar 1 */}
+            <div className="w-[800px] h-[80px] flex items-center bg-[#363B44] border border-[#e5e7eb]/20 rounded-[10px] px-12">
+              <div className="flex flex-row items-start ml-[15px]">
+                <div className="w-6 h-6 flex items-center justify-center rounded-full mr-3 -ml-[8px]" style={{ background: 'linear-gradient(135deg, #3B82F6 0%, #8B5CF6 50%, #06B6D4 100%)' }}>
+                  <img src="/SVG/job.svg" alt="Job Icon" className="w-4 h-4" />
+                </div>
+                <div className="flex flex-col justify-center ml-[5px]">
+                  <span className="font-outfit text-2xl font-semibold leading-tight mb-1">Business Intelligence Intern</span>
+                  <span className="font-jetbrains text-lg text-[#60a5fa] leading-tight mb-2">CORE Entertainment • 2023 - Present</span>
+                  <span className="font-outfit text-lg text-white leading-tight">Designed Tableau dashboards that uncovered sales trends and peak traffic hours—boosting marketing ROI by 13%.</span>
+                </div>
               </div>
-            ))}
+            </div>
+            {/* Bar 2 */}
+            <div className="w-[800px] h-[80px] flex items-center bg-[#363B44] border border-[#e5e7eb]/20 rounded-[10px] px-12">
+              <div className="flex flex-row items-start ml-[15px]">
+                <div className="w-6 h-6 flex items-center justify-center rounded-full mr-3 -ml-[8px]" style={{ background: 'linear-gradient(135deg, #3B82F6 0%, #8B5CF6 50%, #06B6D4 100%)' }}>
+                  <img src="/SVG/job.svg" alt="Job Icon" className="w-4 h-4" />
+                </div>
+                <div className="flex flex-col justify-center ml-[5px]">
+                  <span className="font-outfit text-2xl font-semibold leading-tight mb-1">Data Analytics Intern</span>
+                  <span className="font-jetbrains text-lg text-[#60a5fa] leading-tight mb-2">Infectious Disease Professionals LLC • May 2023 - Aug 2023</span>
+                  <span className="font-outfit text-lg text-white leading-tight">Analyzed patient datasets using Python, R, and SQL.</span>
+                </div>
+              </div>
+            </div>
+            {/* Bar 3 */}
+            <div className="w-[800px] h-[80px] flex items-center bg-[#363B44] border border-[#e5e7eb]/20 rounded-[10px] px-12">
+              <div className="flex flex-row items-start ml-[15px]">
+                <div className="w-6 h-6 flex items-center justify-center rounded-full mr-3 -ml-[8px]" style={{ background: 'linear-gradient(135deg, #3B82F6 0%, #8B5CF6 50%, #06B6D4 100%)' }}>
+                  <img src="/SVG/job.svg" alt="Job Icon" className="w-4 h-4" />
+                </div>
+                <div className="flex flex-col justify-center ml-[5px]">
+                  <span className="font-outfit text-2xl font-semibold leading-tight mb-1">Code Tutor</span>
+                  <span className="font-jetbrains text-lg text-[#60a5fa] leading-tight mb-2">Code Ninjas • 2019</span>
+                  <span className="font-outfit text-lg text-white leading-tight">Taught coding fundamentals using HTML, Python, and Java/JavaScript to the next generation of developers.</span>
+                </div>
+              </div>
+        </div>
           </div>
-        </section>
+          {/* Right: Articles and Dashboards */}
+          <div className="flex flex-col items-end gap-12 mr-16 w-[700px]">
+            <div>
+              <span className="font-outfit text-xl font-semibold mb-4 block text-right">Latest Articles</span>
+              <div className="flex flex-row gap-6">
+                <div className="w-[260px] h-[120px] flex flex-col justify-center bg-[#363B44] border border-[#e5e7eb]/20 rounded-[10px] px-6 hover:bg-[#4a4a4a] hover:border-[#60a5fa]/60 hover:transform hover:scale-105 hover:shadow-2xl transition-all duration-300 cursor-pointer group">
+                  <span className="font-outfit text-lg font-semibold mb-1 text-white">From Start to Finish: The Statistical Story of the NBA Finals</span>
+                  <span className="font-outfit text-sm text-[#d1d5db]">A data-driven breakdown of momentum, matchups, and meaning in the 2025 NBA Finals.</span>
+                </div>
+                <div className="w-[260px] h-[120px] flex flex-col justify-center bg-[#363B44] border border-[#e5e7eb]/20 rounded-[10px] px-6 hover:bg-[#4a4a4a] hover:border-[#60a5fa]/60 hover:transform hover:scale-105 hover:shadow-2xl transition-all duration-300 cursor-pointer group">
+                  <span className="font-outfit text-lg font-semibold mb-1 text-white">Wins and Wallets: The Business Impact of Team Success in the NBA</span>
+                  <span className="font-outfit text-sm text-[#d1d5db]">How star power, team performance, and brand identity shape the financial side of the NBA.</span>
+                </div>
+                <div className="w-[260px] h-[120px] flex flex-col justify-center bg-[#363B44] border border-[#e5e7eb]/20 rounded-[10px] px-6 hover:bg-[#4a4a4a] hover:border-[#60a5fa]/60 hover:transform hover:scale-105 hover:shadow-2xl transition-all duration-300 cursor-pointer group">
+                  <span className="font-outfit text-lg font-semibold mb-1 text-white">A Data-Driven Analysis of the NBA Season and Playoff Projections</span>
+                  <span className="font-outfit text-sm text-[#d1d5db]">Bridging expectations and reality in the NBA season and playoffs.</span>
+                </div>
+              </div>
+            </div>
+            {/* Tableau Dashboards */}
+            <div className="mt-10">
+              <span className="font-outfit text-xl font-semibold mb-4 block text-right">Tableau Dashboards</span>
+              <div className="flex flex-row gap-6">
+                {/* Dashboard 1: Pacers vs Thunder */}
+                <div className="w-[320px] h-[240px] flex flex-col justify-start bg-[#363B44] border border-[#e5e7eb]/20 rounded-[10px] px-0 py-0 overflow-hidden hover:bg-[#4a4a4a] hover:border-[#60a5fa]/60 hover:transform hover:scale-105 hover:shadow-2xl transition-all duration-300 cursor-pointer group">
+                  <div className="w-full h-[140px]">
+                    <div className='tableauPlaceholder' id='viz1752017709486' style={{position: 'relative', width: '100%', height: '100%'}}>
+                      <noscript>
+                        <a href='#'><img alt='Dashboard 1 ' src='https://public.tableau.com/static/images/pa/pacers_thunder/Dashboard1/1_rss.png' style={{border: 'none', width: '100%', height: '100%'}} /></a>
+                      </noscript>
+                      <object className='tableauViz' style={{display:'none'}}>
+                        <param name='host_url' value='https%3A%2F%2Fpublic.tableau.com%2F' />
+                        <param name='embed_code_version' value='3' />
+                        <param name='site_root' value='' />
+                        <param name='name' value='pacers_thunder/Dashboard1' />
+                        <param name='tabs' value='no' />
+                        <param name='toolbar' value='yes' />
+                        <param name='static_image' value='https://public.tableau.com/static/images/pa/pacers_thunder/Dashboard1/1.png' />
+                        <param name='animate_transition' value='yes' />
+                        <param name='display_static_image' value='yes' />
+                        <param name='display_spinner' value='yes' />
+                        <param name='display_overlay' value='yes' />
+                        <param name='display_count' value='yes' />
+                        <param name='language' value='en-US' />
+                      </object>
+                    </div>
+                  </div>
+                  <div className="px-6 pt-2 pb-3">
+                    <span className="font-outfit text-lg font-semibold mb-1 block text-white">Pacers vs Thunder Dashboard</span>
+                    <span className="font-outfit text-sm text-[#d1d5db]">Interactive Tableau dashboard for Pacers vs Thunder.</span>
+                  </div>
+                </div>
+                {/* Dashboard 2: NBA Analytics Dashboard */}
+                <div className="w-[320px] h-[240px] flex flex-col justify-start bg-[#363B44] border border-[#e5e7eb]/20 rounded-[10px] px-0 py-0 overflow-hidden hover:bg-[#4a4a4a] hover:border-[#60a5fa]/60 hover:transform hover:scale-105 hover:shadow-2xl transition-all duration-300 cursor-pointer group">
+                  <div className="w-full h-[140px]">
+                    <div className='tableauPlaceholder' id='viz1752017770038' style={{position: 'relative', width: '100%', height: '100%'}}>
+                      <noscript>
+                        <a href='#'><img alt='Dashboard 1 ' src='https://public.tableau.com/static/images/vi/viz_17493568944290/Dashboard1/1_rss.png' style={{border: 'none', width: '100%', height: '100%'}} /></a>
+                      </noscript>
+                      <object className='tableauViz' style={{display:'none'}}>
+                        <param name='host_url' value='https%3A%2F%2Fpublic.tableau.com%2F' />
+                        <param name='embed_code_version' value='3' />
+                        <param name='site_root' value='' />
+                        <param name='name' value='viz_17493568944290/Dashboard1' />
+                        <param name='tabs' value='no' />
+                        <param name='toolbar' value='yes' />
+                        <param name='static_image' value='https://public.tableau.com/static/images/vi/viz_17493568944290/Dashboard1/1.png' />
+                        <param name='animate_transition' value='yes' />
+                        <param name='display_static_image' value='yes' />
+                        <param name='display_spinner' value='yes' />
+                        <param name='display_overlay' value='yes' />
+                        <param name='display_count' value='yes' />
+                        <param name='language' value='en-US' />
+                      </object>
+                    </div>
+                  </div>
+                  <div className="px-6 pt-2 pb-3">
+                    <span className="font-outfit text-lg font-semibold mb-1 block text-white">NBA Analytics Dashboard</span>
+                    <span className="font-outfit text-sm text-[#d1d5db]">Interactive Tableau dashboard for NBA Analytics.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </main>
     </div>
   );

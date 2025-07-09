@@ -6,7 +6,7 @@ const ThreeJSArtGallery = dynamic(() => import('../components/ThreeJSArtGallery'
 export default function ArtGallery() {
   return (
     <div className="min-h-screen flex flex-col bg-white">
-      <Navbar />
+      <Navbar position="top" />
       <div className="flex-1">
         <ThreeJSArtGallery />
       </div>

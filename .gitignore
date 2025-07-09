@@ -9,7 +9,7 @@
 !.yarn/plugins
 !.yarn/releases
 !.yarn/versions
-*.svg
+
 # testing
 /coverage
 
@@ -22,6 +22,7 @@
 *.ogg
 *.flac
 *.aac
+*.png
 
 # production
 /build
